@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import FileUpload from "@/components/FileUpload";
 import ScoreGauge from "@/components/ScoreGauge";
 import SkillBadges from "@/components/SkillBadges";
 import OptimizedResume from "@/components/OptimizedResume";
-import { optimizeResume, type OptimizeResult } from "@/lib/api";
+import { optimizeResume, getApiBase, setApiBase, type OptimizeResult } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -15,6 +16,8 @@ const Index = () => {
   const [jd, setJd] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<OptimizeResult | null>(null);
+  const [apiUrl, setApiUrl] = useState(getApiBase());
+  const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async () => {
