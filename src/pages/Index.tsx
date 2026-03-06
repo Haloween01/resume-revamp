@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import FileUpload from "@/components/FileUpload";
 import ScoreGauge from "@/components/ScoreGauge";
 import SkillBadges from "@/components/SkillBadges";
 import OptimizedResume from "@/components/OptimizedResume";
-import { optimizeResume, type OptimizeResult } from "@/lib/api";
+import { optimizeResume, getApiBase, setApiBase, type OptimizeResult } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -15,6 +16,8 @@ const Index = () => {
   const [jd, setJd] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<OptimizeResult | null>(null);
+  const [apiUrl, setApiUrl] = useState(getApiBase());
+  const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async () => {
@@ -38,12 +41,42 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto flex items-center gap-3 py-4 px-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
+        <div className="container mx-auto flex items-center justify-between py-4 px-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <h1 className="font-display text-xl font-bold text-foreground">ResumeAI</h1>
           </div>
-          <h1 className="font-display text-xl font-bold text-foreground">ResumeAI</h1>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+          >
+            <Settings className="h-5 w-5" />
+          </button>
         </div>
+        {showSettings && (
+          <div className="container mx-auto px-4 pb-3">
+            <div className="flex gap-2 items-center">
+              <Input
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
+                placeholder="API Base URL"
+                className="text-sm bg-card"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setApiBase(apiUrl);
+                  toast({ title: "Saved", description: `API URL set to ${apiUrl}` });
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="container mx-auto px-4 py-10 max-w-3xl space-y-8">
