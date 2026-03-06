@@ -6,7 +6,16 @@ export interface OptimizeResult {
   optimized_resume: string;
 }
 
-const API_BASE = "http://127.0.0.1:8000";
+let API_BASE = localStorage.getItem("api_base") || "http://127.0.0.1:8000";
+
+export function getApiBase() {
+  return API_BASE;
+}
+
+export function setApiBase(url: string) {
+  API_BASE = url;
+  localStorage.setItem("api_base", url);
+}
 
 export async function optimizeResume(
   resumeFile: File,
