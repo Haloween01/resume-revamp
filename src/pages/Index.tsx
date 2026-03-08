@@ -52,10 +52,13 @@ const Index = () => {
   };
 
   const handleApplyAndDownload = async () => {
-    if (!file || !result) return;
+    if (!result) return;
     setApplying(true);
     try {
-      const blob = await applyChanges(file, jd, Array.from(selectedSuggestions));
+      const selectedSugs = result.suggestions
+        .filter(s => selectedSuggestions.has(s.id))
+        .map(({ current, suggested }) => ({ current, suggested }));
+      const blob = await applyResumeChanges(result.resume_text, selectedSugs);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
