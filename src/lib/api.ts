@@ -3,18 +3,16 @@ export interface Suggestion {
   category: string;
   text: string;
   impact: "high" | "medium" | "low";
+  current: string;
+  suggested: string;
 }
 
 export interface AnalyzeResult {
-  ats_score: number;
+  resume_text: string;
+  ats_before: number;
   matched_skills: string[];
   missing_skills: string[];
   suggestions: Suggestion[];
-}
-
-export interface ApplyResult {
-  ats_after: number;
-  download_url: string;
 }
 
 let API_BASE = localStorage.getItem("api_base") || "http://127.0.0.1:8000";
@@ -28,7 +26,7 @@ export function setApiBase(url: string) {
   localStorage.setItem("api_base", url);
 }
 
-export async function analyzeResume(
+export async function optimizeResume(
   resumeFile: File,
   jobDescription: string
 ): Promise<AnalyzeResult> {
@@ -36,33 +34,34 @@ export async function analyzeResume(
   formData.append("resume", resumeFile, resumeFile.name);
   formData.append("jd", jobDescription);
 
-  const response = await fetch(`${API_BASE}/analyze-resume`, {
+  const response = await fetch(`${API_BASE}/optimize-resume`, {
     method: "POST",
     headers: { accept: "application/json" },
     body: formData,
   });
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+    const err = await response.json().catch(() => null);
+    throw new Error(err?.detail || `API error: ${response.status}`);
   }
 
   return response.json();
 }
 
-export async function applyChanges(
-  resumeFile: File,
-  jobDescription: string,
-  selectedSuggestionIds: string[]
+export async function applyResumeChanges(
+  resumeText: string,
+  suggestions: Pick<Suggestion, "current" | "suggested">[]
 ): Promise<Blob> {
-  const formData = new FormData();
-  formData.append("resume", resumeFile, resumeFile.name);
-  formData.append("jd", jobDescription);
-  formData.append("suggestions", JSON.stringify(selectedSuggestionIds));
-
-  const response = await fetch(`${API_BASE}/apply-changes`, {
+  const response = await fetch(`${API_BASE}/apply-resume-changes`, {
     method: "POST",
-    headers: { accept: "application/pdf" },
-    body: formData,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/pdf",
+    },
+    body: JSON.stringify({
+      resume_text: resumeText,
+      suggestions,
+    }),
   });
 
   if (!response.ok) {
