@@ -38,7 +38,7 @@ const Index = () => {
     }
     setAnalyzing(true);
     try {
-      const data = await analyzeResume(file, jd);
+      const data = await optimizeResume(file, jd);
       setResult(data);
       // Auto-select high impact suggestions
       const highImpact = new Set(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
