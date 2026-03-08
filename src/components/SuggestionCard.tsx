@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import type { Suggestion } from "@/lib/api";
@@ -9,7 +10,7 @@ interface SuggestionCardProps {
   index: number;
 }
 
-const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCardProps) => {
+const SuggestionCard = React.forwardRef<HTMLButtonElement, SuggestionCardProps>(({ suggestion, selected, onToggle, index }, ref) => {
   return (
     <motion.button
       initial={{ opacity: 0, y: 12 }}
@@ -50,6 +51,8 @@ const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCar
       </div>
     </motion.button>
   );
-};
+});
+
+SuggestionCard.displayName = "SuggestionCard";
 
 export default SuggestionCard;
