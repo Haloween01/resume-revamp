@@ -48,12 +48,24 @@ const Index = () => {
             </div>
             <h1 className="font-display text-xl font-bold text-foreground">ResumeAI</h1>
           </div>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-          >
-            <Settings className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                const isDark = document.documentElement.classList.toggle("dark");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+              }}
+              className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <Sun className="h-5 w-5 hidden dark:block" />
+              <Moon className="h-5 w-5 block dark:hidden" />
+            </button>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
+          </div>
         </div>
         {showSettings && (
           <div className="container mx-auto px-4 pb-3">
