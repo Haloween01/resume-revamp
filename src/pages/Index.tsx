@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, Settings, Moon, Sun, Download, ArrowLeft, CheckCheck } from "lucide-react";
+import { Sparkles, Loader2, Settings, Moon, Sun, Download, ArrowLeft, CheckCheck, BookOpen, Code2, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -40,9 +40,9 @@ const Index = () => {
     try {
       const data = await optimizeResume(file, jd);
       setResult(data);
-      // Auto-select high impact suggestions
-      const highImpact = new Set<string>(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
-      setSelectedSuggestions(highImpact);
+      // Auto-select all suggestions
+      const allIds = new Set<string>(data.suggestions.map(s => s.id));
+      setSelectedSuggestions(allIds);
       setStep(1);
     } catch {
       toast({ title: "Error", description: "Failed to analyze resume. Make sure the API server is running.", variant: "destructive" });
@@ -62,7 +62,7 @@ const Index = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `optimized_${file.name}`;
+      a.download = `optimized_${file?.name || "resume.pdf"}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -217,7 +217,7 @@ const Index = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-8"
             >
-              {/* ATS Score */}
+              {/* ATS Scores */}
               <div className="text-center space-y-2">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
                   Analysis Results
@@ -227,8 +227,11 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center">
-                <ScoreGauge label="ATS Score" score={result.ats_before} color="before" />
+              <div className="flex justify-center gap-8 flex-wrap">
+                <ScoreGauge label="Current ATS Score" score={result.ats_before} color="before" />
+                {result.predicted_ats_after_changes > 0 && (
+                  <ScoreGauge label="Predicted After" score={result.predicted_ats_after_changes} color="after" />
+                )}
               </div>
 
               {/* Skills */}
@@ -270,6 +273,63 @@ const Index = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Learning Plan */}
+              {result.learning_plan.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-display font-semibold text-foreground text-lg flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    Learning Plan
+                  </h3>
+                  <ul className="space-y-2">
+                    {result.learning_plan.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-foreground rounded-lg border bg-card p-3">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                          {i + 1}
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* DSA Plan */}
+              {result.dsa_plan.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-display font-semibold text-foreground text-lg flex items-center gap-2">
+                    <Code2 className="h-5 w-5 text-primary" />
+                    DSA Practice Plan
+                  </h3>
+                  <ul className="space-y-2">
+                    {result.dsa_plan.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-foreground rounded-lg border bg-card p-3">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                          {i + 1}
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Recommended Jobs */}
+              {result.recommended_jobs.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-display font-semibold text-foreground text-lg flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                    Recommended Job Roles
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {result.recommended_jobs.map((job, i) => (
+                      <span key={i} className="rounded-full border bg-card px-3 py-1.5 text-sm font-medium text-foreground">
+                        {job}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex gap-3">
