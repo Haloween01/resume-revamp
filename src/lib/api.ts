@@ -50,7 +50,7 @@ export async function optimizeResume(
 
   const data = await response.json();
 
-  // Normalize suggestions: backend doesn't send id/impact, generate them
+  // Normalize suggestions: backend doesn't send id, generate them
   data.suggestions = (data.suggestions || []).map((s: any, i: number) => ({
     id: s.id || `suggestion-${i}`,
     section: s.section || s.category || "General",
@@ -60,27 +60,4 @@ export async function optimizeResume(
   }));
 
   return data;
-}
-
-export async function applyResumeChanges(
-  resumeText: string,
-  suggestions: Pick<Suggestion, "current" | "suggested">[]
-): Promise<Blob> {
-  const response = await fetch(`${API_BASE}/apply-resume-changes`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/pdf",
-    },
-    body: JSON.stringify({
-      resume_text: resumeText,
-      suggestions,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
-  }
-
-  return response.blob();
 }
