@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Loader2, Settings, Moon, Sun, ArrowLeft, ArrowRight,
-  CheckCheck, Download, BookOpen, Code2, Briefcase, Copy, Check
+  CheckCheck, Download, BookOpen, Code2, Briefcase, Copy, Check,
+  ExternalLink, Play, GraduationCap, Map
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -201,14 +202,14 @@ const Index = () => {
               </div>
               <div className="flex justify-center gap-10 flex-wrap">
                 <ScoreGauge label="Current Match" score={result.ats_before} color="before" />
-                {result.predicted_ats_after_changes > 0 && (
-                  <ScoreGauge label="Predicted After Improvements" score={result.predicted_ats_after_changes} color="after" />
+                {result.predicted_ats_after > 0 && (
+                  <ScoreGauge label="Predicted After Improvements" score={result.predicted_ats_after} color="after" />
                 )}
               </div>
               <div className="rounded-xl border bg-card p-6 text-center space-y-2">
                 <p className="text-sm text-muted-foreground">Potential Improvement</p>
                 <p className="text-3xl font-display font-bold text-primary">
-                  +{Math.max(0, (result.predicted_ats_after_changes || 0) - result.ats_before).toFixed(0)}%
+                  +{Math.max(0, (result.predicted_ats_after || 0) - result.ats_before).toFixed(0)}%
                 </p>
               </div>
               <NavigationButtons />
@@ -281,13 +282,12 @@ const Index = () => {
                   <BookOpen className="h-7 w-7 text-primary" />
                   Learning Roadmap
                 </h2>
-                <p className="text-muted-foreground">A personalized plan to fill your skill gaps.</p>
+                <p className="text-muted-foreground">A personalized plan to fill your skill gaps with curated resources.</p>
               </div>
-              {result.learning_plan.length > 0 ? (
+              {result.learning_resources.length > 0 ? (
                 <div className="relative space-y-0">
-                  {/* Timeline line */}
                   <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-border" />
-                  {result.learning_plan.map((item, i) => (
+                  {result.learning_resources.map((resource, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, x: 20 }}
@@ -298,15 +298,54 @@ const Index = () => {
                       <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
                         {i + 1}
                       </div>
-                      <div className="flex-1 rounded-xl border bg-card p-4">
-                        <p className="text-sm font-medium text-foreground">{item}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Week {(i * 2) + 1}–{(i * 2) + 2}</p>
+                      <div className="flex-1 rounded-xl border bg-card p-4 space-y-3">
+                        <p className="text-sm font-semibold text-foreground">{typeof resource === "string" ? resource : resource.skill}</p>
+                        {typeof resource !== "string" && (
+                          <div className="flex flex-wrap gap-2">
+                            {resource.youtube && (
+                              <a
+                                href={resource.youtube}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-destructive/10 text-destructive px-3 py-1.5 text-xs font-medium hover:bg-destructive/20 transition-colors"
+                              >
+                                <Play className="h-3 w-3" />
+                                YouTube
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                            {resource.course && (
+                              <a
+                                href={resource.course}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium hover:bg-primary/20 transition-colors"
+                              >
+                                <GraduationCap className="h-3 w-3" />
+                                Course
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                            {resource.roadmap && (
+                              <a
+                                href={resource.roadmap}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-accent text-accent-foreground px-3 py-1.5 text-xs font-medium hover:opacity-80 transition-colors"
+                              >
+                                <Map className="h-3 w-3" />
+                                Roadmap
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 text-muted-foreground">No learning plan available.</div>
+                <div className="text-center py-12 text-muted-foreground">No learning resources available.</div>
               )}
               <NavigationButtons />
             </motion.div>
@@ -377,7 +416,20 @@ const Index = () => {
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                         <Briefcase className="h-5 w-5 text-primary" />
                       </div>
-                      <p className="text-base font-medium text-foreground">{job}</p>
+                      <div className="flex-1">
+                        <p className="text-base font-medium text-foreground">{job.role}</p>
+                      </div>
+                      {job.linkedin && (
+                        <a
+                          href={job.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-2 text-xs font-medium hover:bg-primary/20 transition-colors"
+                        >
+                          Search on LinkedIn
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
                     </motion.div>
                   ))}
                 </div>
