@@ -15,7 +15,7 @@ const FileUpload = ({ file, onFileChange }: FileUploadProps) => {
       e.preventDefault();
       setIsDragging(false);
       const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile?.type === "application/pdf") {
+      if (droppedFile && (droppedFile.name.endsWith(".pdf") || droppedFile.name.endsWith(".docx"))) {
         onFileChange(droppedFile);
       }
     },
