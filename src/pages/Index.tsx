@@ -228,7 +228,7 @@ const Index = () => {
               </div>
 
               <div className="flex justify-center">
-                <ScoreGauge label="ATS Score" score={result.ats_score} color="before" />
+                <ScoreGauge label="ATS Score" score={result.ats_before} color="before" />
               </div>
 
               {/* Skills */}
