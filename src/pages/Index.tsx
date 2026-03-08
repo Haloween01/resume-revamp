@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Loader2, Settings } from "lucide-react";
+import { Sparkles, Loader2, Settings, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,13 @@ const Index = () => {
   const [apiUrl, setApiUrl] = useState(getApiBase());
   const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const handleSubmit = async () => {
     if (!file || !jd.trim()) {
@@ -48,12 +55,24 @@ const Index = () => {
             </div>
             <h1 className="font-display text-xl font-bold text-foreground">ResumeAI</h1>
           </div>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-          >
-            <Settings className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                const isDark = document.documentElement.classList.toggle("dark");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+              }}
+              className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <Sun className="h-5 w-5 hidden dark:block" />
+              <Moon className="h-5 w-5 block dark:hidden" />
+            </button>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
+          </div>
         </div>
         {showSettings && (
           <div className="container mx-auto px-4 pb-3">
