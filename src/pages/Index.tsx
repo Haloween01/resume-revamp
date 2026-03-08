@@ -122,7 +122,8 @@ const Index = () => {
         </Button>
       )}
     </div>
-  );
+  ));
+  NavigationButtons.displayName = "NavigationButtons";
 
   return (
     <div className="min-h-screen bg-background">
