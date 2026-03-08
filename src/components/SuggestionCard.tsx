@@ -22,7 +22,7 @@ const impactLabels = {
 };
 
 const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCardProps) => {
-  const impact = impactLabels[suggestion.impact];
+  const impact = impactLabels[suggestion.impact] || impactLabels.low;
   const ImpactIcon = impact.icon;
 
   return (
