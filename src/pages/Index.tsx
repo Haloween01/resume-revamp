@@ -12,7 +12,8 @@ import ScoreGauge from "@/components/ScoreGauge";
 import SkillBadges from "@/components/SkillBadges";
 import SuggestionCard from "@/components/SuggestionCard";
 import StepIndicator from "@/components/StepIndicator";
-import { optimizeResume, applyResumeChanges, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
+import { optimizeResume, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
+import { applyAndDownloadPdf } from "@/lib/pdf";
 import { useToast } from "@/hooks/use-toast";
 
 const pageTransition = {
