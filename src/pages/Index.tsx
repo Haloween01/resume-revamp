@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Loader2, Settings, Moon, Sun, ArrowLeft, ArrowRight,
@@ -97,7 +97,7 @@ const Index = () => {
   const nextStep = () => setStep(s => Math.min(s + 1, 6));
   const prevStep = () => setStep(s => Math.max(s - 1, 0));
 
-  const NavigationButtons = ({ showDownload = false }: { showDownload?: boolean }) => (
+  const NavigationButtons = React.forwardRef<HTMLDivElement, { showDownload?: boolean }>(({ showDownload = false }, ref) => (
     <div className="flex gap-3 pt-4">
       <Button variant="outline" onClick={prevStep} className="gap-2">
         <ArrowLeft className="h-4 w-4" />
@@ -122,7 +122,8 @@ const Index = () => {
         </Button>
       )}
     </div>
-  );
+  ));
+  NavigationButtons.displayName = "NavigationButtons";
 
   return (
     <div className="min-h-screen bg-background">
