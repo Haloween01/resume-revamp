@@ -12,7 +12,8 @@ import ScoreGauge from "@/components/ScoreGauge";
 import SkillBadges from "@/components/SkillBadges";
 import SuggestionCard from "@/components/SuggestionCard";
 import StepIndicator from "@/components/StepIndicator";
-import { optimizeResume, applyResumeChanges, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
+import { optimizeResume, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
+import { applyAndDownloadPdf } from "@/lib/pdf";
 import { useToast } from "@/hooks/use-toast";
 
 const pageTransition = {
@@ -66,18 +67,10 @@ const Index = () => {
       const selectedSugs = result.suggestions
         .filter(s => selectedSuggestions.has(s.id))
         .map(({ current, suggested }) => ({ current, suggested }));
-      const blob = await applyResumeChanges(result.resume_text, selectedSugs);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `optimized_${file?.name || "resume.pdf"}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      applyAndDownloadPdf(result.resume_text, selectedSugs, `optimized_${file?.name || "resume.pdf"}`);
       toast({ title: "Success!", description: "Your optimized resume has been downloaded." });
     } catch {
-      toast({ title: "Error", description: "Failed to apply changes. Please try again.", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to generate PDF. Please try again.", variant: "destructive" });
     } finally {
       setApplying(false);
     }
