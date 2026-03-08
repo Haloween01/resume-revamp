@@ -20,6 +20,13 @@ const Index = () => {
   const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
   const handleSubmit = async () => {
     if (!file || !jd.trim()) {
       toast({ title: "Missing input", description: "Please upload a resume and paste a job description.", variant: "destructive" });
