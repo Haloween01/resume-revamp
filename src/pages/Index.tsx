@@ -9,7 +9,7 @@ import ScoreGauge from "@/components/ScoreGauge";
 import SkillBadges from "@/components/SkillBadges";
 import SuggestionCard from "@/components/SuggestionCard";
 import StepIndicator from "@/components/StepIndicator";
-import { analyzeResume, applyChanges, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
+import { optimizeResume, applyResumeChanges, getApiBase, setApiBase, type AnalyzeResult } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -38,10 +38,10 @@ const Index = () => {
     }
     setAnalyzing(true);
     try {
-      const data = await analyzeResume(file, jd);
+      const data = await optimizeResume(file, jd);
       setResult(data);
       // Auto-select high impact suggestions
-      const highImpact = new Set(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
+      const highImpact = new Set<string>(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
       setSelectedSuggestions(highImpact);
       setStep(1);
     } catch {
@@ -52,10 +52,13 @@ const Index = () => {
   };
 
   const handleApplyAndDownload = async () => {
-    if (!file || !result) return;
+    if (!result) return;
     setApplying(true);
     try {
-      const blob = await applyChanges(file, jd, Array.from(selectedSuggestions));
+      const selectedSugs = result.suggestions
+        .filter(s => selectedSuggestions.has(s.id))
+        .map(({ current, suggested }) => ({ current, suggested }));
+      const blob = await applyResumeChanges(result.resume_text, selectedSugs);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -225,7 +228,7 @@ const Index = () => {
               </div>
 
               <div className="flex justify-center">
-                <ScoreGauge label="ATS Score" score={result.ats_score} color="before" />
+                <ScoreGauge label="ATS Score" score={result.ats_before} color="before" />
               </div>
 
               {/* Skills */}
