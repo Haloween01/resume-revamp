@@ -38,6 +38,15 @@ const SuggestionCard = React.forwardRef<HTMLButtonElement, SuggestionCardProps>(
             {suggestion.section}
           </span>
           <p className="text-sm text-foreground leading-relaxed">{suggestion.reason}</p>
+          {suggestion.keyword_added && (
+            <div className="flex flex-wrap gap-1">
+              {suggestion.keyword_added.split(",").map((kw, i) => (
+                <span key={i} className="inline-flex items-center rounded-md bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                  + {kw.trim()}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="flex items-start gap-2 text-xs">
             <span className="rounded bg-destructive/10 text-destructive px-2 py-1 line-through flex-1">
               {suggestion.current}

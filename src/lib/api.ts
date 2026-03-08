@@ -4,6 +4,19 @@ export interface Suggestion {
   current: string;
   suggested: string;
   reason: string;
+  keyword_added?: string | null;
+}
+
+export interface LearningResource {
+  skill: string;
+  youtube: string;
+  course: string;
+  roadmap: string;
+}
+
+export interface RecommendedJob {
+  role: string;
+  linkedin: string;
 }
 
 export interface AnalyzeResult {
@@ -12,10 +25,10 @@ export interface AnalyzeResult {
   matched_skills: string[];
   missing_skills: string[];
   suggestions: Suggestion[];
-  predicted_ats_after_changes: number;
-  learning_plan: string[];
+  predicted_ats_after: number;
+  learning_resources: LearningResource[];
   dsa_plan: string[];
-  recommended_jobs: string[];
+  recommended_jobs: RecommendedJob[];
 }
 
 let API_BASE = localStorage.getItem("api_base") || "http://127.0.0.1:8000";
@@ -50,14 +63,26 @@ export async function optimizeResume(
 
   const data = await response.json();
 
-  // Normalize suggestions: backend doesn't send id, generate them
+  // Normalize suggestions
   data.suggestions = (data.suggestions || []).map((s: any, i: number) => ({
     id: s.id || `suggestion-${i}`,
     section: s.section || s.category || "General",
     current: s.current || "",
     suggested: s.suggested || "",
     reason: s.reason || s.text || "",
+    keyword_added: s.keyword_added || null,
   }));
+
+  // Normalize learning_resources
+  data.learning_resources = data.learning_resources || data.learning_plan || [];
+
+  // Normalize recommended_jobs
+  if (data.recommended_jobs?.length && typeof data.recommended_jobs[0] === "string") {
+    data.recommended_jobs = data.recommended_jobs.map((j: string) => ({ role: j, linkedin: "" }));
+  }
+
+  // Normalize predicted_ats_after
+  data.predicted_ats_after = data.predicted_ats_after ?? data.predicted_ats_after_changes ?? 0;
 
   return data;
 }
