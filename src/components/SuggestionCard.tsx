@@ -51,6 +51,8 @@ const SuggestionCard = React.forwardRef<HTMLButtonElement, SuggestionCardProps>(
       </div>
     </motion.button>
   );
-};
+});
+
+SuggestionCard.displayName = "SuggestionCard";
 
 export default SuggestionCard;
