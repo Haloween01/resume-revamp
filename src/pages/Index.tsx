@@ -271,7 +271,28 @@ const Index = () => {
                   ))}
                 </div>
               </div>
-              <NavigationButtons showDownload />
+              <div className="flex gap-3 pt-4">
+                <Button variant="outline" onClick={prevStep} className="gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+                <Button
+                  onClick={handleApplyAndDownload}
+                  disabled={applying || selectedSuggestions.size === 0}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  {applying ? (
+                    <><Loader2 className="h-5 w-5 animate-spin" /> Applying...</>
+                  ) : (
+                    <><Download className="h-5 w-5" /> Apply & Download PDF</>
+                  )}
+                </Button>
+                <Button onClick={nextStep} className="flex-1 gap-2 h-12 text-base font-semibold">
+                  Next
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </motion.div>
           )}
 
