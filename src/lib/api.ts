@@ -1,10 +1,9 @@
 export interface Suggestion {
   id: string;
-  category: string;
-  text: string;
-  impact: "high" | "medium" | "low";
+  section: string;
   current: string;
   suggested: string;
+  reason: string;
 }
 
 export interface AnalyzeResult {
@@ -13,6 +12,10 @@ export interface AnalyzeResult {
   matched_skills: string[];
   missing_skills: string[];
   suggestions: Suggestion[];
+  predicted_ats_after_changes: number;
+  learning_plan: string[];
+  dsa_plan: string[];
+  recommended_jobs: string[];
 }
 
 let API_BASE = localStorage.getItem("api_base") || "http://127.0.0.1:8000";
@@ -45,7 +48,18 @@ export async function optimizeResume(
     throw new Error(err?.detail || `API error: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+
+  // Normalize suggestions: backend doesn't send id/impact, generate them
+  data.suggestions = (data.suggestions || []).map((s: any, i: number) => ({
+    id: s.id || `suggestion-${i}`,
+    section: s.section || s.category || "General",
+    current: s.current || "",
+    suggested: s.suggested || "",
+    reason: s.reason || s.text || "",
+  }));
+
+  return data;
 }
 
 export async function applyResumeChanges(

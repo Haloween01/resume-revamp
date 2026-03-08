@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Zap, TrendingUp, Lightbulb } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import type { Suggestion } from "@/lib/api";
 
 interface SuggestionCardProps {
@@ -9,22 +9,7 @@ interface SuggestionCardProps {
   index: number;
 }
 
-const impactColors = {
-  high: "border-primary bg-primary/5",
-  medium: "border-warning/50 bg-warning/5",
-  low: "border-muted-foreground/30 bg-muted/30",
-};
-
-const impactLabels = {
-  high: { icon: Zap, text: "High Impact", class: "text-primary" },
-  medium: { icon: TrendingUp, text: "Medium", class: "text-warning" },
-  low: { icon: Lightbulb, text: "Low", class: "text-muted-foreground" },
-};
-
 const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCardProps) => {
-  const impact = impactLabels[suggestion.impact] || impactLabels.low;
-  const ImpactIcon = impact.icon;
-
   return (
     <motion.button
       initial={{ opacity: 0, y: 12 }}
@@ -34,7 +19,7 @@ const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCar
       className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
         selected
           ? "border-primary bg-accent shadow-md"
-          : `${impactColors[suggestion.impact]} hover:shadow-sm`
+          : "border-border hover:border-primary/30 hover:shadow-sm"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -47,17 +32,20 @@ const SuggestionCard = ({ suggestion, selected, onToggle, index }: SuggestionCar
         >
           {selected && <Check className="h-3 w-3 text-primary-foreground" />}
         </div>
-        <div className="flex-1 space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {suggestion.category}
+        <div className="flex-1 space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {suggestion.section}
+          </span>
+          <p className="text-sm text-foreground leading-relaxed">{suggestion.reason}</p>
+          <div className="flex items-start gap-2 text-xs">
+            <span className="rounded bg-destructive/10 text-destructive px-2 py-1 line-through flex-1">
+              {suggestion.current}
             </span>
-            <span className={`flex items-center gap-1 text-xs font-medium ${impact.class}`}>
-              <ImpactIcon className="h-3 w-3" />
-              {impact.text}
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
+            <span className="rounded bg-primary/10 text-primary px-2 py-1 flex-1">
+              {suggestion.suggested}
             </span>
           </div>
-          <p className="text-sm text-foreground leading-relaxed">{suggestion.text}</p>
         </div>
       </div>
     </motion.button>
