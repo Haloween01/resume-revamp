@@ -41,7 +41,7 @@ const Index = () => {
       const data = await optimizeResume(file, jd);
       setResult(data);
       // Auto-select high impact suggestions
-      const highImpact = new Set(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
+      const highImpact = new Set<string>(data.suggestions.filter(s => s.impact === "high").map(s => s.id));
       setSelectedSuggestions(highImpact);
       setStep(1);
     } catch {
