@@ -71,7 +71,7 @@ const FileUpload = ({ file, onFileChange }: FileUploadProps) => {
             </p>
             <input
               type="file"
-              accept=".pdf"
+              accept=".pdf,.docx"
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
